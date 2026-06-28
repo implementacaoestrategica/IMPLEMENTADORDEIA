@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Implementador de IA – Treinamento Gratuito</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: Arial, sans-serif;
+    background: #07090f;
+    color: #fff;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-image: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=1400&q=80');
+    background-size: cover;
+    background-position: center top;
+  }
+
+  .hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to right, rgba(7,9,15,0.55) 0%, transparent 30%, transparent 70%, rgba(7,9,15,0.55) 100%),
+      linear-gradient(to top, rgba(7,9,15,1) 0%, rgba(7,9,15,0.97) 30%, rgba(7,9,15,0.75) 48%, rgba(7,9,15,0.15) 62%, transparent 72%),
+      linear-gradient(to bottom, rgba(7,9,15,0.4) 0%, transparent 12%);
+  }
+
+  /* ── TOP BAR ── */
+  .hero-top {
+    position: relative;
+    z-index: 2;
+    padding: 28px 24px 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  .badge-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1.5px solid #00e6c8;
+    border-radius: 999px;
+    padding: 7px 22px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    color: #00e6c8;
+    text-transform: uppercase;
+    background: rgba(7,9,15,0.35);
+  }
+
+  .dot-live {
+    width: 8px;
+    height: 8px;
+    background: #00e6c8;
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.25} }
+
+  /* ── HERO CONTENT ── */
+  .hero-bottom {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 700px;
+    margin: 58vh auto 0;
+    padding: 0 24px 52px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  h1 {
+    font-size: clamp(40px, 10vw, 68px);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: #fff;
+    text-shadow: 0 2px 28px rgba(0,0,0,0.85);
+    margin-bottom: 6px;
+  }
+
+  h1 span.accent { color: #00e6c8; display: block; }
+
+  .subtitle {
+    font-size: 15px;
+    color: rgba(255,255,255,0.72);
+    line-height: 1.7;
+    max-width: 460px;
+    margin: 14px auto 22px;
+    text-shadow: 0 1px 10px rgba(0,0,0,0.9);
+  }
+
+  .subtitle strong { color: #fff; font-weight: 600; }
+
+  /* ── DATA CHIP ── */
+  .data-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    padding: 7px 18px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 22px;
+  }
+
+  .data-chip .highlight { color: #00e6c8; font-weight: 700; }
+
+  /* ── COUNTDOWN ── */
+  .countdown {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 26px;
+  }
+
+  .cd-block {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.13);
+    border-radius: 10px;
+    width: 70px;
+    padding: 12px 6px 9px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .cd-num {
+    font-size: 26px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cd-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: rgba(255,255,255,0.38);
+    text-transform: uppercase;
+  }
+
+  /* ── CTA BUTTON ── */
+  .btn-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: linear-gradient(45deg, #00e6c8, #00c3ff);
+    color: #07090f;
+    font-size: 17px;
+    font-weight: 900;
+    border: none;
+    border-radius: 12px;
+    padding: 17px 36px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.15s, filter 0.15s;
+    width: 100%;
+    max-width: 420px;
+    letter-spacing: 0.01em;
+  }
+
+  .btn-cta:hover { filter: brightness(1.1); transform: scale(1.03); }
+  .btn-cta:active { transform: scale(0.98); }
+
+  /* ── GUARANTEES ── */
+  .garantias {
+    margin-top: 14px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.35);
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .garantias span::before { content: "·"; margin-right: 5px; color: #00e6c8; }
+
+  /* ── FEATURES STRIP ── */
+  .features {
+    background: rgba(255,255,255,0.04);
+    border-top: 1px solid rgba(255,255,255,0.07);
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    padding: 32px 24px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .feat-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 18px 22px;
+    width: 200px;
+    text-align: center;
+  }
+
+  .feat-icon { font-size: 28px; margin-bottom: 8px; }
+
+  .feat-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .feat-desc {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.5;
+  }
+
+  /* ── FOOTER ── */
+  .below {
+    background: #07090f;
+    padding: 32px 24px 44px;
+    text-align: center;
+  }
+
+  .legal {
+    font-size: 10px;
+    color: rgba(255,255,255,0.18);
+    line-height: 1.7;
+    max-width: 600px;
+    margin: 0 auto;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 18px;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 480px) {
+    .hero-bottom { margin-top: 52vh; }
+    .cd-block { width: 58px; }
+    .cd-num { font-size: 20px; }
+    .btn-cta { font-size: 15px; padding: 15px 18px; }
+    h1 { font-size: 38px; }
+    .feat-card { width: 160px; padding: 14px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<section class="hero">
+
+  <div class="hero-top">
+    <div class="badge-live">
+      <span class="dot-live"></span>
+      Transmissão ao vivo · Gratuita
+    </div>
+  </div>
+
+  <div class="hero-bottom">
+    <h1>IMPLEMENTADOR<span class="accent">DE IA</span></h1>
+
+    <p class="subtitle">
+      Aprenda a implementar soluções com <strong>Inteligência Artificial</strong>
+      de forma prática, transformando sua carreira e gerando
+      <strong>resultados reais</strong> com tecnologia de ponta.
+    </p>
+
+    <div class="data-chip">
+      Segunda · <span class="highlight">06/07</span> às <span class="highlight">20h00</span>
+    </div>
+
+    <div class="countdown">
+      <div class="cd-block"><div class="cd-num" id="cd-dias">--</div><div class="cd-label">Dias</div></div>
+      <div class="cd-block"><div class="cd-num" id="cd-horas">--</div><div class="cd-label">Horas</div></div>
+      <div class="cd-block"><div class="cd-num" id="cd-min">--</div><div class="cd-label">Min</div></div>
+      <div class="cd-block"><div class="cd-num" id="cd-seg">--</div><div class="cd-label">Seg</div></div>
+    </div>
+
+    <a class="btn-cta" href="https://chat.whatsapp.com/L0RDMTQheWnE9EChkM8k3V" target="_blank" rel="noopener noreferrer">
+      🚀 Acessar Treinamento Gratuito
+    </a>
+
+    <div class="garantias">
+      <span>100% gratuito</span>
+      <span>Sem spam</span>
+      <span>Saia quando quiser</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES STRIP ── -->
+<div class="features">
+  <div class="feat-card">
+    <div class="feat-icon">🤖</div>
+    <div class="feat-title">IA na Prática</div>
+    <div class="feat-desc">Implemente soluções reais do zero, sem enrolação</div>
+  </div>
+  <div class="feat-card">
+    <div class="feat-icon">⚡</div>
+    <div class="feat-title">Resultados Rápidos</div>
+    <div class="feat-desc">Metodologia focada em aplicação imediata</div>
+  </div>
+  <div class="feat-card">
+    <div class="feat-icon">🎯</div>
+    <div class="feat-title">Carreira em Alta</div>
+    <div class="feat-desc">Habilidades mais valorizadas do mercado atual</div>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<div class="below">
+  <div class="legal">
+    Este site não faz parte do site do Facebook ou da Meta Platforms, Inc.
+    Além disso, este site NÃO é endossado pelo Facebook de nenhuma maneira.
+    FACEBOOK é uma marca comercial independente da Meta Platforms, Inc.
+  </div>
+</div>
+
+<script>
+  function updateCountdown() {
+    var target = new Date("2026-07-06T23:00:00Z");
+    var now = new Date();
+    var diff = target - now;
+
+    if (diff <= 0) {
+      ["cd-dias","cd-horas","cd-min","cd-seg"].forEach(function(id) {
+        document.getElementById(id).textContent = "00";
+      });
+      return;
+    }
+
+    var pad = function(n) { return String(n).padStart(2, "0"); };
+    document.getElementById("cd-dias").textContent  = pad(Math.floor(diff / 86400000));
+    document.getElementById("cd-horas").textContent = pad(Math.floor(diff % 86400000 / 3600000));
+    document.getElementById("cd-min").textContent   = pad(Math.floor(diff % 3600000 / 60000));
+    document.getElementById("cd-seg").textContent   = pad(Math.floor(diff % 60000 / 1000));
+  }
+
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+</script>
+</body>
+</html>
